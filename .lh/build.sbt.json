@@ -1,0 +1,30 @@
+{
+    "sourceFile": "build.sbt",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1701436370557,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1701440293455,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,6 +20,6 @@\n   // Scala Test\n   \"org.scalatest\" %% \"scalatest\" % \"3.2.17\" % Test,\n \n   // Cats Effect Testing - Library for testing Cats Effect programs\n-  \"org.typelevel\" %% \"cats-effect-testing-scalatest\" % \"1.4.3\" % Test\n+  // \"org.typelevel\" %% \"cats-effect-testing-scalatest\" % \"1.4.3\" % Test\n )\n"
+                },
+                {
+                    "date": 1701440310935,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,6 +20,6 @@\n   // Scala Test\n   \"org.scalatest\" %% \"scalatest\" % \"3.2.17\" % Test\n \n   // Cats Effect Testing - Library for testing Cats Effect programs\n-  // \"org.typelevel\" %% \"cats-effect-testing-scalatest\" % \"1.4.3\" % Test\n+  \"org.typelevel\" %% \"cats-effect-testing-scalatest\" % \"1.5.0\" % Test\n )\n"
+                },
+                {
+                    "date": 1701443289111,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,8 +15,9 @@\n   \"org.typelevel\" %% \"cats-effect\" % \"3.2.8\",\n \n   // Fs2 - Functional Streams for Scala\n   \"co.fs2\" %% \"fs2-core\" % \"3.1.6\",\n+  \"co.fs2\" %% \"fs2-io\" % \"3.9.3\",\n \n   // Scala Test\n   \"org.scalatest\" %% \"scalatest\" % \"3.2.17\" % Test,\n \n"
+                }
+            ],
+            "date": 1701436370557,
+            "name": "Commit-0",
+            "content": "lazy val root = (project in file(\".\")).\n  settings(\n    inThisBuild(List(\n      scalaVersion := \"2.13.12\"\n    )),\n    name := \"advent-of-code\"\n  )\n\nlibraryDependencies ++= Seq(\n  // Cats - Functional programming library\n  \"org.typelevel\" %% \"cats-core\" % \"2.6.1\",\n\n  // Cats Effect - Effect type and concurrency library\n  \"org.typelevel\" %% \"cats-effect\" % \"3.2.8\",\n\n  // Fs2 - Functional Streams for Scala\n  \"co.fs2\" %% \"fs2-core\" % \"3.1.6\",\n\n  // Scala Test\n  \"org.scalatest\" %% \"scalatest\" % \"3.2.17\" % Test,\n\n  // Cats Effect Testing - Library for testing Cats Effect programs\n  \"org.typelevel\" %% \"cats-effect-testing-scalatest\" % \"1.4.3\" % Test\n)\n"
+        }
+    ]
+}

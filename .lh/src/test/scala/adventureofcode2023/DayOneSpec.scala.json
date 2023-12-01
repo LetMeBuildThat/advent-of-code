@@ -1,0 +1,26 @@
+{
+    "sourceFile": "src/test/scala/adventureofcode2023/DayOneSpec.scala",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1701441810694,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1701441879173,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,12 @@\n package adventureofcode2023\n \n import org.scalatest.funsuite.AsyncFunSuite\n import cats.effect.testing.scalatest.AsyncIOSpec\n+import org.scalatest.matchers.should.Matchers\n \n-object DayOneSpec extends AsyncFunSuite with AsyncIOSpec {}\n+object DayOneSpec extends AsyncFunSuite with AsyncIOSpec with Matchers {\n+\n+    test(\"DayOne.calibrationSum takes a string containing at least two digits and returns the sum of them\") {\n+        val input = Stream[IO, String](\"a1b2\", \"a3b6\")\n+    }\n+}\n"
+                },
+                {
+                    "date": 1701441888101,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,8 +2,10 @@\n \n import org.scalatest.funsuite.AsyncFunSuite\n import cats.effect.testing.scalatest.AsyncIOSpec\n import org.scalatest.matchers.should.Matchers\n+import fs2.Stream\n+import cats.effect.IO\n \n object DayOneSpec extends AsyncFunSuite with AsyncIOSpec with Matchers {\n \n   test(\n"
+                }
+            ],
+            "date": 1701441810694,
+            "name": "Commit-0",
+            "content": "package adventureofcode2023\n\nimport org.scalatest.funsuite.AsyncFunSuite\nimport cats.effect.testing.scalatest.AsyncIOSpec\n\nobject DayOneSpec extends AsyncFunSuite with AsyncIOSpec {\n  \n}\n"
+        }
+    ]
+}

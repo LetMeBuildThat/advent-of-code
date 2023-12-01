@@ -1,0 +1,22 @@
+[0m[[0m[31merror[0m] [0m[0mjava.nio.file.NoSuchFileException: file:/Users/ewanhardingham/dev/advent-of-code/target/bg-jobs/sbt_3c03b169/job-1/target/8539f414/291a1910/advent-of-code_2.13-0.1.0-SNAPSHOT.jar!/adventofcode2023/day-one.txt[0m
+[0m[[0m[31merror[0m] [0m[0m	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)[0m
+[0m[[0m[31merror[0m] [0m[0m	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)[0m
+[0m[[0m[31merror[0m] [0m[0m	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)[0m
+[0m[[0m[31merror[0m] [0m[0m	at java.base/sun.nio.fs.UnixFileSystemProvider.newFileChannel(UnixFileSystemProvider.java:181)[0m
+[0m[[0m[31merror[0m] [0m[0m	at java.base/java.nio.channels.FileChannel.open(FileChannel.java:298)[0m
+[0m[[0m[31merror[0m] [0m[0m	at java.base/java.nio.channels.FileChannel.open(FileChannel.java:357)[0m
+[0m[[0m[31merror[0m] [0m[0m	at fs2.io.file.FilesCompanionPlatform$AsyncFiles.$anonfun$open$1(FilesPlatform.scala:322)[0m
+[0m[[0m[31merror[0m] [0m[0m	at blocking @ fs2.io.file.FilesCompanionPlatform$AsyncFiles.open(FilesPlatform.scala:322)[0m
+[0m[[0m[31merror[0m] [0m[0m	at make @ fs2.io.file.FilesCompanionPlatform$AsyncFiles.openFileChannel(FilesPlatform.scala:332)[0m
+[0m[[0m[31merror[0m] [0m[0m	at make @ fs2.io.file.FilesCompanionPlatform$AsyncFiles.openFileChannel(FilesPlatform.scala:332)[0m
+[0m[[0m[31merror[0m] [0m[0m	at uncancelable @ fs2.Pull$.acquireCancelable(Pull.scala:423)[0m
+[0m[[0m[31merror[0m] [0m[0m	at flatMap @ fs2.Compiler$Target.flatMap(Compiler.scala:163)[0m
+[0m[[0m[31merror[0m] [0m[0m	at handleErrorWith @ fs2.Compiler$Target.handleErrorWith(Compiler.scala:161)[0m
+[0m[[0m[31merror[0m] [0m[0m	at flatMap @ fs2.Compiler$Target.flatMap(Compiler.scala:163)[0m
+[0m[[0m[31merror[0m] [0m[0m	at uncancelable @ fs2.Compiler$Target.uncancelable(Compiler.scala:165)[0m
+[0m[[0m[31merror[0m] [0m[0m	at unique @ fs2.Compiler$Target$ConcurrentTarget.unique(Compiler.scala:194)[0m
+[0m[[0m[31merror[0m] [0m[0m	at flatMap @ fs2.Compiler$Target.flatMap(Compiler.scala:163)[0m
+[0m[[0m[31merror[0m] [0m[0m	at ref @ fs2.Compiler$Target$ConcurrentTarget.ref(Compiler.scala:195)[0m
+[0m[[0m[31merror[0m] [0m[0m	at flatMap @ fs2.Compiler$Target.flatMap(Compiler.scala:163)[0m
+[0m[[0m[31merror[0m] [0m[0m	at flatMap @ fs2.Compiler$Target.flatMap(Compiler.scala:163)[0m
+[0m[[0m[31merror[0m] [0m[0m(Compile / [31mrun[0m) java.nio.file.NoSuchFileException: file:/Users/ewanhardingham/dev/advent-of-code/target/bg-jobs/sbt_3c03b169/job-1/target/8539f414/291a1910/advent-of-code_2.13-0.1.0-SNAPSHOT.jar!/adventofcode2023/day-one.txt[0m
