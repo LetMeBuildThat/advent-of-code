@@ -39,7 +39,7 @@ object DayTwo extends App {
     }
   }
 
-  def part1(input: List[String], rule: RedGreenBlue): Int = {
+  def stringsToGames(input: List[String]): List[Game] =
     input
       .flatMap { str =>
         val Array(g, s) = str.split(": ")
@@ -61,9 +61,21 @@ object DayTwo extends App {
           Game(id.toInt, sets.toList)
         }
       }
+
+  def part1(input: List[String], rule: RedGreenBlue): Int = {
+    stringsToGames(input)
       .filter(_.possible(rule))
       .map(_.id)
       .sum
+  }
+
+  def part2(input: List[String]): Int = {
+    stringsToGames(input).map { game =>
+      val redMax = game.sets.map(_.r).max
+      val greenMax = game.sets.map(_.g).max
+      val blueMax = game.sets.map(_.b).max
+      redMax * greenMax * blueMax
+    }.sum
   }
 
   val input = Source
@@ -76,4 +88,5 @@ object DayTwo extends App {
   val rule = RedGreenBlue(12, 13, 14)
 
   println(part1(input, rule))
+  println(part2(input))
 }
