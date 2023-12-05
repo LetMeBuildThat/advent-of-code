@@ -2,151 +2,107 @@ package adventofcode2023
 
 import scala.collection.immutable.ListMap
 import scala.io.Source
+import scala.collection.immutable
+import scala.util.Try
 
 object DayThree extends App {
 
-  case class Row(numbersIndexes: Map[Int, List[Int]], symbolIndexes: List[Int])
+  case class Row(indexedNumbers: Map[Int, List[Int]], symbolIndexes: Set[Int]) {
+    def possibleSymbolIndexes(number: Int): Set[Int] =
+      indexedNumbers.get(number) match {
+        case None => Set.empty[Int]
+        case Some(indexes) => {
+          val leftAdj = indexes.min - 1
+          val rightAdj = indexes.max + 1
+          indexes.toSet + leftAdj + rightAdj
+        }
+      }
+    def matches(indexes: Set[Int]): Boolean =
+      indexes.intersect(symbolIndexes).nonEmpty
+  }
 
   object Row {
-    def getEngineSchematicNumbers(rows: List[Row]): List[Int] = {
-      def helper(rows: List[Row], n: Int, acc: List[Int]): List[Int] = {
-        if (n > rows.length - 1)
-          acc
-        else {
-          val engineNumbers: List[Int] =
-            if (n == 0) {
-              val currentRow = rows(n)
-              val nextRowSymbols = rows(n + 1).symbolIndexes
+    def fromString(str: String): Row = {
+      val indexed: Map[Int, Char] = indexChars(str)
+      val (digits, nonDigits): (Map[Int, Char], Map[Int, Char]) =
+        digitsAndNonDigits(indexed)
+      val numbers: Map[Int, List[Int]] = groupIndexedDigits(digits)
+      val symbols: Set[Int] = filterSymbols(nonDigits)
+      Row(numbers, symbols)
+    }
 
-              currentRow.numbersIndexes
-                .filter { case (number, indexes) =>
-                  val (leftAdjacent, rightAdjacent) =
-                    getAdjacentIndexes(indexes)
-                  // Check if there is a symbol left or right of the current number
-                  currentRow.symbolIndexes.exists(i =>
-                    i == leftAdjacent || i == rightAdjacent
-                  ) match {
-                    // Check to see if there is a symbol on the next row below or diagonally
-                    case false =>
-                      nextRowSymbols.exists(i =>
-                        indexes.contains(
-                          i
-                        ) || i == leftAdjacent || i == rightAdjacent
-                      )
-                    case true => true
-                  }
-                }
-                .keySet
-                .toList
-            } else if (n == rows.length - 1) {
-              val currentRow = rows(n)
-              val previousRowSymbols = rows(n - 1).symbolIndexes
-              currentRow.numbersIndexes
-                .filter { case (number, indexes) =>
-                  val (leftAdjacent, rightAdjacent) =
-                    getAdjacentIndexes(indexes)
-                  // Check if there is a symbol left or right of the current number
-                  currentRow.symbolIndexes.exists(i =>
-                    i == leftAdjacent || i == rightAdjacent
-                  ) match {
-                    // Check to see if there is a symbol on the previous row above or diagonally
-                    case false =>
-                      previousRowSymbols.exists(i =>
-                        indexes.contains(
-                          i
-                        ) || i == leftAdjacent || i == rightAdjacent
-                      )
-                    case true => true
-                  }
-                }
-                .keySet
-                .toList
-            } else {
-              val currentRow = rows(n)
-              val previousRowSymbols = rows(n - 1).symbolIndexes
-              val nextRowSymbols = rows(n + 1).symbolIndexes
-              currentRow.numbersIndexes
-                .filter { case (number, indexes) =>
-                  val (leftAdjacent, rightAdjacent) =
-                    getAdjacentIndexes(indexes)
-                  // Check if there is a symbol left or right of the current number
-                  currentRow.symbolIndexes.exists(i =>
-                    i == leftAdjacent || i == rightAdjacent
-                  ) match {
-                    // Check to see if there is a symbol on either row above, below or diagonally
-                    case false =>
-                      val bothRowSymbols = previousRowSymbols ++ nextRowSymbols
-                      bothRowSymbols.exists(i =>
-                        indexes.contains(
-                          i
-                        ) || i == leftAdjacent || i == rightAdjacent
-                      )
-                    case true => true
-                  }
-                }
-                .keySet
-                .toList
-            }
-          helper(rows, n + 1, acc ++ engineNumbers)
+    def indexChars(str: String): Map[Int, Char] =
+      str.toList.zipWithIndex.map(_.swap).toMap
+
+    def digitsAndNonDigits(
+        m: Map[Int, Char]
+    ): (Map[Int, Char], Map[Int, Char]) =
+      m.partition { case (i, c) => c.isDigit }
+
+    def filterSymbols(m: Map[Int, Char]): Set[Int] =
+      m.filter { case (i, c) =>
+        c != '.'
+      }.keySet
+
+    def groupIndexedDigits(m: Map[Int, Char]): Map[Int, List[Int]] = {
+      val sortedKeys = m.keys.toList.sorted
+      val groupedKeys = groupIndexes(sortedKeys, List.empty, List.empty)
+
+      groupedKeys.flatMap { consecKeys =>
+        val digits = consecKeys.flatMap { i => m.get(i) }
+        val convert = digitCharsToNumber(digits)
+        val numberAndIndexes = convert.map(number => number -> consecKeys)
+        numberAndIndexes
+      }.toMap
+    }
+
+    def groupIndexes(
+        l: List[Int],
+        b: List[Int],
+        acc: List[List[Int]]
+    ): List[List[Int]] =
+      l match {
+        case Nil => acc :+ b
+        case head :: _ => {
+          if (b.isEmpty)
+            groupIndexes(l.tail, b :+ head, acc)
+          else if (head == b.last + 1)
+            groupIndexes(l.tail, b :+ head, acc)
+          else
+            groupIndexes(l.tail, List(head), acc :+ b)
         }
       }
 
-      def getAdjacentIndexes(indexes: List[Int]): (Int, Int) =
-        (indexes.head - 1, indexes.last + 1)
-
-      helper(rows, 0, List.empty)
-    }
+    def digitCharsToNumber(l: List[Char]): Option[Int] =
+      l.mkString.toIntOption
   }
 
   def part1(input: List[String]): Int = {
-    val rows = input
-      .map { str =>
-        val indexed: Map[Int, Char] =
-          ListMap.from(str.zipWithIndex.map(_.swap).toSeq.sortBy(_._1))
-        val digitsWithIndex: Map[Int, Char] = indexed.filter(p => p._2.isDigit)
-        val numbersAndTheirIndexes = groupNumbersWithIndexes(digitsWithIndex)
-        val indexesOfSymbols: List[Int] =
-          indexed
-            .filter(t => !t._2.isLetterOrDigit && t._2 != '.')
-            .keySet
-            .toList
-        Row(numbersAndTheirIndexes, indexesOfSymbols)
-      }
-    Row.getEngineSchematicNumbers(rows).sum
+    val rows = input.map(Row.fromString)
+    checkWinners(rows).sum
   }
 
-  def groupNumbersWithIndexes(digitMap: Map[Int, Char]): Map[Int, List[Int]] = {
-    def helper(
-        digitMap: Map[Int, Char],
-        buff: Map[Int, Char],
-        acc: Map[Int, List[Int]]
-    ): Map[Int, List[Int]] = {
-      if (digitMap.isEmpty)
-        if (buff.nonEmpty)
-          acc ++ Map(buff.values.mkString.toInt -> buff.keySet.toList)
-        else
-          acc
+  def checkWinners(rows: List[Row]): List[Int] = {
+    def helper(n: Int, acc: List[Int]): List[Int] = {
+      if (n == rows.size)
+        acc
       else {
-        val (index, digitChar) = digitMap.head
-        buff.lastOption match {
-          case None => helper(digitMap.tail, Map(index -> digitChar), acc)
-          case Some((buffIndex, buffDigit)) => {
-            if (index == buffIndex + 1)
-              helper(digitMap.tail, buff ++ Map(index -> digitChar), acc)
-            else {
-              val number = buff.values.mkString.toInt
-              val indexes = buff.keySet
-              helper(
-                digitMap.tail,
-                Map(index -> digitChar),
-                acc ++ Map(number -> indexes.toList)
-              )
-            }
-          }
+        val currentRow = rows(n)
+        val aboveRow = Try(rows(n - 1)).toOption
+        val belowRow = Try(rows(n + 1)).toOption
+        val valids = currentRow.indexedNumbers.keySet.filter { number =>
+          val validIndexes = currentRow.possibleSymbolIndexes(number)
+          val leftOrRight = currentRow.matches(validIndexes)
+          val above = aboveRow.fold(false)(row => row.matches(validIndexes))
+          val below = belowRow.fold(false)(row => row.matches(validIndexes))
+          leftOrRight || above || below
         }
+
+        helper(n + 1, acc ++ valids)
       }
     }
-    helper(digitMap, Map.empty[Int, Char], Map.empty[Int, List[Int]])
+
+    helper(0, List.empty)
   }
 
   val input = Source

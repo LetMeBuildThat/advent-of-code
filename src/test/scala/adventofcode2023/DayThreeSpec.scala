@@ -3,31 +3,109 @@ package adventofcode2023
 import org.scalatest.funsuite.AsyncFunSuite
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.scalatest.matchers.should.Matchers
-import DayTwo._
+import DayThree._
+import DayThree.Row._
 import scala.collection.immutable.TreeMap
 
 class DayThreeSpec extends AsyncFunSuite with AsyncIOSpec with Matchers {
-  test(
-    "DayThree.groupNumbersWithIndexes should key by number and group its indexes"
-  ) {
-    val input: Map[Int, Char] = TreeMap(
-      0 -> '1',
-      1 -> '2',
-      2 -> '3',
-      4 -> '9',
-      6 -> '2',
+  test("indexChars should index a String successfully") {
+    val input = "467..114.."
+    val input2 = ""
+
+    val expected = Map(
+      0 -> '4',
+      1 -> '6',
+      2 -> '7',
+      3 -> '.',
+      4 -> '.',
+      5 -> '1',
+      6 -> '1',
       7 -> '4',
-      8 -> '6'
+      8 -> '.',
+      9 -> '.'
     )
 
-    val expected: Map[Int, List[Int]] = Map(
-      123 -> List(0, 1, 2),
-      9 -> List(4),
-      246 -> List(6, 7, 8)
-    )
-
-    DayThree.groupNumbersWithIndexes(input) shouldBe expected
+    indexChars(input) shouldBe expected
+    indexChars(input2) shouldBe Map.empty
   }
+
+  test("filterDigits should return two maps of digits and non-digit chars") {
+    val input = Map(
+      0 -> '4',
+      1 -> '6',
+      2 -> '7',
+      3 -> '.',
+      4 -> '.',
+      5 -> '1',
+      6 -> '1',
+      7 -> '4',
+      8 -> '.',
+      9 -> '.'
+    )
+
+    val digits = Map(
+      0 -> '4',
+      1 -> '6',
+      2 -> '7',
+      5 -> '1',
+      6 -> '1',
+      7 -> '4'
+    )
+
+    val nonDigits = Map(
+      3 -> '.',
+      4 -> '.',
+      8 -> '.',
+      9 -> '.'
+    )
+
+    digitsAndNonDigits(input) shouldBe (digits, nonDigits)
+    digitsAndNonDigits(Map.empty) shouldBe (Map.empty, Map.empty)
+  }
+
+  test(
+    "filterSymbols should return only the index of chars which are symbols"
+  ) {
+    val input = Map(
+      0 -> '*',
+      3 -> '.',
+      4 -> '.',
+      6 -> '$',
+      8 -> '.',
+      9 -> '@'
+    )
+
+    val expected = Set(0, 6, 9)
+
+    filterSymbols(input) shouldBe expected
+  }
+
+  test("groupIndexes should group consecutive index numbers") {
+    val input = List(0, 1, 2, 5, 6, 7, 9)
+
+    val expected = List(List(0, 1, 2), List(5, 6, 7), List(9))
+
+    groupIndexes(input, List.empty, List.empty) shouldBe expected
+  }
+
+  test("groupIndexedDigits should return a number and its indexes") {
+    val input = Map(
+      0 -> '4',
+      1 -> '6',
+      2 -> '7',
+      5 -> '1',
+      6 -> '1',
+      7 -> '4'
+    )
+
+    val expected = Map(
+      467 -> List(0, 1, 2),
+      114 -> List(5, 6, 7)
+    )
+
+    groupIndexedDigits(input) shouldBe expected
+  }
+
   test("DayThree.part1 calculates the test input correctly") {
     val input = List(
       "467..114..",
@@ -55,9 +133,18 @@ class DayThreeSpec extends AsyncFunSuite with AsyncIOSpec with Matchers {
       "778...871.......*769.290*..........&..............................*................./.........................*...................743.153...",
       ".............140............938..763..........3...............443..510....868...579.....577/....264............572.........#........*...$..."
     )
+    val input4 = List(
+      "..........573..525..&....958.777...............*..........*...........883....=....%.........158.....530..839....803............254*688......",
+      "..................*..560.............&......592.........159......743.......209.....735......*.......................237.....................",
+      "................15..................54.665........858..............*....93...................438.239*825.......284.....*.....565*684........",
+      "......732..............574.690..........@.....471....*....@.......157....*............692.....................*........495..................",
+      "...$.*.....320..9..........@......*576..........*........196..........738.................47......%955...80...983..505...............249....",
+      ".468.541.........%.............134...............974..............=................424........533..........*..........*...727..............."
+    )
 
     DayThree.part1(input) shouldBe 4361
     DayThree.part1(input2) shouldBe 1385
     DayThree.part1(input3) shouldBe 6944
+    DayThree.part1(input4) shouldBe 18284
   }
 }
