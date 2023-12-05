@@ -98,9 +98,9 @@ class DayThreeSpec extends AsyncFunSuite with AsyncIOSpec with Matchers {
       7 -> '4'
     )
 
-    val expected = Map(
-      467 -> List(0, 1, 2),
-      114 -> List(5, 6, 7)
+    val expected = List(
+      IndexedNumber(467, Set(0, 1, 2)),
+      IndexedNumber(114, Set(5, 6, 7))
     )
 
     groupIndexedDigits(input) shouldBe expected

@@ -7,16 +7,11 @@ import scala.util.Try
 
 object DayThree extends App {
 
-  case class Row(indexedNumbers: Map[Int, List[Int]], symbolIndexes: Set[Int]) {
-    def possibleSymbolIndexes(number: Int): Set[Int] =
-      indexedNumbers.get(number) match {
-        case None => Set.empty[Int]
-        case Some(indexes) => {
-          val leftAdj = indexes.min - 1
-          val rightAdj = indexes.max + 1
-          indexes.toSet + leftAdj + rightAdj
-        }
-      }
+  case class IndexedNumber(n: Int, indexes: Set[Int]) {
+    def exists(index: Int): Boolean =
+      indexes.exists(_ == index)
+  }
+  case class Row(indexedNumbers: List[IndexedNumber], symbolIndexes: Set[Int]) {
     def matches(indexes: Set[Int]): Boolean =
       indexes.intersect(symbolIndexes).nonEmpty
   }
@@ -26,7 +21,7 @@ object DayThree extends App {
       val indexed: Map[Int, Char] = indexChars(str)
       val (digits, nonDigits): (Map[Int, Char], Map[Int, Char]) =
         digitsAndNonDigits(indexed)
-      val numbers: Map[Int, List[Int]] = groupIndexedDigits(digits)
+      val numbers: List[IndexedNumber] = groupIndexedDigits(digits)
       val symbols: Set[Int] = filterSymbols(nonDigits)
       Row(numbers, symbols)
     }
@@ -44,16 +39,15 @@ object DayThree extends App {
         c != '.'
       }.keySet
 
-    def groupIndexedDigits(m: Map[Int, Char]): Map[Int, List[Int]] = {
+    def groupIndexedDigits(m: Map[Int, Char]): List[IndexedNumber] = {
       val sortedKeys = m.keys.toList.sorted
       val groupedKeys = groupIndexes(sortedKeys, List.empty, List.empty)
 
       groupedKeys.flatMap { consecKeys =>
         val digits = consecKeys.flatMap { i => m.get(i) }
         val convert = digitCharsToNumber(digits)
-        val numberAndIndexes = convert.map(number => number -> consecKeys)
-        numberAndIndexes
-      }.toMap
+        convert.map(number => IndexedNumber(number, consecKeys.toSet))
+      }
     }
 
     def groupIndexes(
@@ -90,13 +84,16 @@ object DayThree extends App {
         val currentRow = rows(n)
         val aboveRow = Try(rows(n - 1)).toOption
         val belowRow = Try(rows(n + 1)).toOption
-        val valids = currentRow.indexedNumbers.keySet.filter { number =>
-          val validIndexes = currentRow.possibleSymbolIndexes(number)
-          val leftOrRight = currentRow.matches(validIndexes)
-          val above = aboveRow.fold(false)(row => row.matches(validIndexes))
-          val below = belowRow.fold(false)(row => row.matches(validIndexes))
-          leftOrRight || above || below
-        }
+        val valids = currentRow.indexedNumbers
+          .filter { case IndexedNumber(value, indexes) =>
+            val (lAdj, rAdj) = (indexes.min - 1, indexes.max + 1)
+            val validIndexes = Set(lAdj) ++ indexes ++ Set(rAdj)
+            val leftOrRight = currentRow.matches(validIndexes)
+            val above = aboveRow.fold(false)(row => row.matches(validIndexes))
+            val below = belowRow.fold(false)(row => row.matches(validIndexes))
+            leftOrRight || above || below
+          }
+          .map(_.n)
 
         helper(n + 1, acc ++ valids)
       }
@@ -112,6 +109,6 @@ object DayThree extends App {
     .getLines()
     .toList
 
-  println(part1(input))
+  println(part1(input)) //  527446
 
 }
